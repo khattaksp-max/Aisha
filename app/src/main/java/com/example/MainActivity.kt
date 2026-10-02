@@ -40,7 +40,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val app = application as AishaApplication
-        val initialScreen = if (app.preferences.isOnboardingCompleted()) Screen.MAIN else Screen.ONBOARDING
+        val initialScreen = try {
+            if (app.preferences.isOnboardingCompleted()) Screen.MAIN else Screen.ONBOARDING
+        } catch (_: Throwable) {
+            Screen.MAIN
+        }
 
         setContent {
             AishaTheme {

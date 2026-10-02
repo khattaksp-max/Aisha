@@ -38,12 +38,16 @@ class SpeechRecognitionManager(private val context: Context) {
     }
 
     private fun initRecognizer() {
-        if (SpeechRecognizer.isRecognitionAvailable(context)) {
-            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context).apply {
-                setRecognitionListener(createListener())
+        try {
+            if (SpeechRecognizer.isRecognitionAvailable(context)) {
+                speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context).apply {
+                    setRecognitionListener(createListener())
+                }
+            } else {
+                Log.w("SpeechRecognition", "SpeechRecognizer is not available on this device.")
             }
-        } else {
-            Log.w("SpeechRecognition", "SpeechRecognizer is not available on this device.")
+        } catch (e: Throwable) {
+            Log.e("SpeechRecognition", "Failed to initialize SpeechRecognizer: ${e.message}")
         }
     }
 

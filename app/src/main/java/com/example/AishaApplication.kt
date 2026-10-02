@@ -21,12 +21,16 @@ class AishaApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        database = AishaDatabase.getInstance(this)
-        preferences = AishaPreferences(this)
-        repository = AishaRepository(database.aishaDao(), preferences)
-        phoneControlManager = PhoneControlManager(this)
-        ttsManager = TextToSpeechManager(this, preferences)
-        speechRecognitionManager = SpeechRecognitionManager(this)
-        brain = AishaBrain(preferences)
+        try {
+            database = AishaDatabase.getInstance(this)
+            preferences = AishaPreferences(this)
+            repository = AishaRepository(database.aishaDao(), preferences)
+            phoneControlManager = PhoneControlManager(this)
+            ttsManager = TextToSpeechManager(this, preferences)
+            speechRecognitionManager = SpeechRecognitionManager(this)
+            brain = AishaBrain(preferences)
+        } catch (e: Throwable) {
+            android.util.Log.e("AishaApplication", "Error during Application initialization: ${e.message}", e)
+        }
     }
 }

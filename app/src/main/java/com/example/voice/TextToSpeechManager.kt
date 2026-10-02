@@ -30,7 +30,11 @@ class TextToSpeechManager(
     val speechAmplitude: StateFlow<Float> = _speechAmplitude.asStateFlow()
 
     init {
-        tts = TextToSpeech(context.applicationContext, this)
+        try {
+            tts = TextToSpeech(context.applicationContext, this)
+        } catch (e: Throwable) {
+            Log.e("TextToSpeechManager", "Failed to initialize TextToSpeech: ${e.message}")
+        }
     }
 
     override fun onInit(status: Int) {

@@ -1,6 +1,8 @@
 package com.example.ui.theme
 
 import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -9,6 +11,12 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+
+private tailrec fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
+}
 
 private val AishaDarkColorScheme = darkColorScheme(
     primary = AishaPrimary,
@@ -41,15 +49,17 @@ fun AishaTheme(
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
-            val window = (view.context as? Activity)?.window
-            if (window != null) {
-                @Suppress("DEPRECATION")
-                window.statusBarColor = AishaDeepBackground.toArgb()
-                @Suppress("DEPRECATION")
-                window.navigationBarColor = AishaDeepBackground.toArgb()
-                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
-                WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = false
-            }
+            try {
+                val window = view.context.findActivity()?.window
+                if (window != null) {
+                    @Suppress("DEPRECATION")
+                    window.statusBarColor = AishaDeepBackground.toArgb()
+                    @Suppress("DEPRECATION")
+                    window.navigationBarColor = AishaDeepBackground.toArgb()
+                    WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+                    WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = false
+                }
+            } catch (_: Throwable) {}
         }
     }
 
